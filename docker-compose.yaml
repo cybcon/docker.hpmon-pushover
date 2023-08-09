@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  homepage_monitoring:
+    container_name: homepage_monitoring
+    restart: "no"
+    read_only: true
+    user: 2129:2129
+    image: oitc/hpmon_pushover:latest
+    environment:
+      MONITORING_CONFIGURATION_URL: https://github.com/cybcon/docker.hpmon-pushover/blob/main/example_config.json
+      # Pushover application credentials
+      PUSHOVER_USER_KEY: myPushoverUserKey
+      PUSHOVER_API_KEY: myPushoverApiKey
+      # Optional LOGLEVEL, can be one of debug, info, warning , error
+      LOGLEVEL: 'debug'
+    tmpfs:
+      - /tmp
