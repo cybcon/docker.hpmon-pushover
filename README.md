@@ -29,15 +29,55 @@ The container grab the configuration via environment variables.
 | `PUSHOVER_API_KEY` | The application key of your pushover application | **MANDATORY** | |
 | `LOGLEVEL` | The loglevel of the application inside the container, can be one of: `debug`, `info`, `warning`, `error` | **OPTIONAL** | ` info` |
 
+## Monitoring Configurtion
+
+The configuration file (referenced in environment variable `MONITORING_CONFIGURATION_URL`) is in json format. The inner main json frame is:
+
+```json
+{
+  "webpages": []
+}
+```
+
+Inside the `webpages` array, you can define objects with the following attributes:
+
+| Attribute name       | Description | Required | Default value |
+|----------------------|-------------|----------|---------------|
+| `monitoring_url`     | The http or https URL to monitor. | **MANDATORY** | |
+| `response_ok_data`   | A pattern inside the http response body that defines everything is ok. | optional | |
+| `response_warn_data` | A pattern inside the http response body that defines that there is a warning. | optional | |
+
+
+### Example
+```json
+{
+  "webpages": [
+    {
+      "monitoring_url": "http://www.example.com/",
+    },
+    {
+      "monitoring_url": "http://www.example.com/",
+      "response_ok_data": "This domain is for use in illustrative examples in documents.",
+    },
+    {
+      "monitoring_url": "http://www.example.com/",
+      "response_ok_data": "Status: OK",
+      "response_warn_data": "Status: WARNING"
+    }
+  ]
+}
+```
+
+
 
 # Docker run
 
 ```
 docker run --rm \
-  -e MONITORING_CONFIGURATION_URL='https://github.com/cybcon/docker.hpmon-pushover/blob/main/example_config.json' \
+  -e MONITORING_CONFIGURATION_URL='https://github.com/cybcon/docker.hpmon-pushover/blob/main/example_config.json?raw=true' \
   -e PUSHOVER_USER_KEY='myPushoverUserKey' \
   -e PUSHOVER_API_KEY='myPushoverApiKey' \
-  oitc/hpmon_pushover:latest
+  oitc/hpmon-pushover:latest
 ```
 
 # Docker compose configuration
@@ -45,9 +85,9 @@ docker run --rm \
 ```yaml
   monitoring:
     restart: "no"
-    image: oitc/hpmon_pushover:latest
+    image: oitc/hpmon-pushover:latest
     environment:
-      MONITORING_CONFIGURATION_URL: https://github.com/cybcon/docker.hpmon-pushover/blob/main/example_config.json
+      MONITORING_CONFIGURATION_URL: https://github.com/cybcon/docker.hpmon-pushover/blob/main/example_config.json?raw=true
       PUSHOVER_USER_KEY: myPushoverUserKey
       PUSHOVER_API_KEY: myPushoverApiKey
 ```
