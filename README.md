@@ -6,7 +6,8 @@ Source code: [GitHub](https://github.com/cybcon/docker.hpmon-pushover)
 
 # Supported tags and respective `Dockerfile` links
 
-* [`latest`, `1.0.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.0/Dockerfile)
+* [`latest`, `1.0.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.1/Dockerfile)
+* [`1.0.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.0/Dockerfile)
 
 # What is the hpmon_pushover container?
 
