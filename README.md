@@ -6,9 +6,9 @@ Source code: [GitHub](https://github.com/cybcon/docker.hpmon-pushover)
 
 # Supported tags and respective `Dockerfile` links
 
-* [`latest`, `1.0.0`](https://github.com/cybcon/docker.hpmon_pushover/blob/v1.0.0/Dockerfile)
+* [`latest`, `1.0.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.0/Dockerfile)
 
-# What is the homepage_monitoring container?
+# What is the hpmon_pushover container?
 
 It's a simple tool, developed in python, to validate if a given URL is up and running and sends a message over
 [Pushover](https://pushover.net/) service if not.
