@@ -1,7 +1,7 @@
 FROM alpine:3.18.2
 
 LABEL maintainer="Michael Oberdorf IT-Consulting <info@oberdorf-itc.de>"
-LABEL site.local.program.version="1.0.0"
+LABEL site.local.program.version="1.0.1"
 
 # LOGLEVEL can be one of debug, info, warning , error
 ENV LOGLEVEL info

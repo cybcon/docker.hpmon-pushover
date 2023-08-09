@@ -11,7 +11,7 @@ import json
 import requests
 import logging
 
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 """
 ###############################################################################
 # F U N C T I O N S
@@ -70,7 +70,7 @@ def check_status(url: str, return_code: int = 200, ok_string: str = None, warn_s
     if ok_string != None:
         if ok_string in response.text:
             return(2, "OK")
-        elif warn_string != None and warn_string in response_text:
+        elif warn_string != None and warn_string in response.text:
             return(1, "String found for warning indication in response body: " + warn_string)
         else:
             return(0, "Validation pattern not found in response body")
