@@ -1,0 +1,81 @@
+name: '$(Date:yyyy-MM-dd)$(Rev:.rr)__$(SourceBranchName)'
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - main
+  paths:
+    include:
+      - resources/*
+
+resources:
+  repositories:
+    - repository: self
+    - repository: pipeline.azuredevops.workflows
+      type: git
+      ref: refs/heads/master
+      name: pipeline.azuredevops.workflows
+
+pool:
+  vmImage: ubuntu-latest
+
+
+variables:
+  appVersion: 1.0.2
+  containerBuildPath: $(Build.Repository.Name)/resources
+  REGISTRY_FQDN: croitccontainerregistryprod.azurecr.io
+  REPOSITORY_NAME: homepage_monitoring
+  continue_on_linter_findings: false
+  continue_on_security_findings: false
+
+steps:
+  - checkout: self
+    displayName: Checkout GIT repository
+
+  - checkout: pipeline.azuredevops.workflows
+    displayName: Checkout central AzureDevops pipeline workflows
+
+  - task: Docker@2
+    displayName: Login to Oberdorf-ITC docker registry
+    inputs:
+      command: login
+      containerRegistry: $(REGISTRY_FQDN)
+
+  - template: docker/dockerfile_linter.yaml@pipeline.azuredevops.workflows
+    parameters:
+      dockerfile: $(Build.Repository.LocalPath)/$(containerBuildPath)/Dockerfile
+      continue_on_findings: ${{ variables.continue_on_linter_findings }}
+
+  - task: Docker@2
+    displayName: 'Build Homepage Monitoring application container v${{ variables.appVersion }}'
+    inputs:
+      containerRegistry: $(REGISTRY_FQDN)
+      repository: $(REPOSITORY_NAME)
+      command: build
+      Dockerfile: $(Build.Repository.LocalPath)/$(containerBuildPath)/Dockerfile
+      buildContext: $(containerBuildPath)
+      tags: |
+        latest
+        $(appVersion)
+        $(appVersion).$(Build.BuildId)
+
+  - template: docker/docker_security_scan.yaml@pipeline.azuredevops.workflows
+    parameters:
+      container_image: $(REGISTRY_FQDN)/$(REPOSITORY_NAME):$(appVersion).$(Build.BuildId)
+      continue_on_findings: ${{ variables.continue_on_security_findings }}
+      # files_to_skip: ""
+
+  - task: Docker@2
+    displayName: Push container image
+    inputs:
+      containerRegistry: $(REGISTRY_FQDN)
+      repository: $(REPOSITORY_NAME)
+      command: push
+      Dockerfile: $(Build.Repository.LocalPath)/$(containerBuildPath)/Dockerfile
+      buildContext: $(containerBuildPath)
+      tags: |
+        latest
+        $(appVersion)
+      #  $(appVersion).$(Build.BuildId)

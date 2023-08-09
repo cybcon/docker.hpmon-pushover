@@ -1,0 +1,16 @@
+{
+  "webpages": [
+    {
+      "customer_name": "This is an example",
+      "customer_id": "Some Unique ID",
+      "monitoring_url": "http://www.example.com/",
+      "validate_data": null
+    },
+    {
+      "customer_name": "This is another example",
+      "customer_id": "Some Unique ID",
+      "monitoring_url": "http://www.example.com/",
+      "validate_data": "This domain is for use in illustrative examples in documents."
+    }
+  ]
+}
