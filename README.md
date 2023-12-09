@@ -99,9 +99,15 @@ This is an example crontab entry to trigger the docker container every 5pm to se
 * 0,15,30,45 * * * /usr/bin/docker-compose -f docker-compose.yml run --rm monitoring >/dev/null 2>&1
 ```
 
+# Donate
+I would appreciate a small donation to support the further development of my open source projects.
+
+<a href="https://www.paypal.com/donate/?hosted_button_id=BHGJGGUS6RH44" target="_blank"><img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" width="200px"></a>
+
+
 # License
 
-Copyright (c) 2021 Michael Oberdorf IT-Consulting
+Copyright (c) 2021-2023 Michael Oberdorf IT-Consulting
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
