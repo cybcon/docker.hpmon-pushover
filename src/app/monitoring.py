@@ -11,7 +11,7 @@ import json
 import requests
 import logging
 
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 """
 ###############################################################################
 # F U N C T I O N S
