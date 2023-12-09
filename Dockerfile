@@ -12,7 +12,7 @@ RUN apk upgrade --available --no-cache --update \
     && apk add --no-cache --update \
        python3=3.11.6-r1 \
        py3-pip=23.3.1-r0 \
-    && pip3 install --no-cache-dir -r /requirements.txt
+       py3-requests=2.31.0-r1
 
 USER 2128:2128
 
