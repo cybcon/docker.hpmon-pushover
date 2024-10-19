@@ -10,8 +10,9 @@ import sys
 import json
 import requests
 import logging
+import time
 
-VERSION = '1.0.2'
+VERSION = '1.1.0'
 """
 ###############################################################################
 # F U N C T I O N S
@@ -143,6 +144,22 @@ if not 'PUSHOVER_API_KEY' in os.environ:
 if not 'MONITORING_CONFIGURATION_URL' in os.environ:
     log.error('Environment variable MONITORING_CONFIGURATION_URL not defined')
     raise Exception('Environment variable MONITORING_CONFIGURATION_URL not defined')
+if 'REPEAT_ON_ERROR' in os.environ:
+    repeat_on_error=False
+    if os.environ['REPEAT_ON_ERROR'].lower() == 'true' or os.environ['REPEAT_ON_ERROR'].lower() == 'yes':
+        repeat_on_error=True
+if repeat_on_error:
+    # set default values
+    max_repeat_counter=1
+    repeat_wait_time=2
+    if 'REPEAT_ON_ERROR_COUNTER' in os.environ:
+        max_repeat_counter=int(os.environ['REPEAT_ON_ERROR_COUNTER'])
+    if 'REPEAT_ON_ERROR_WAIT_TIME_SEC' in os.environ:
+        repeat_wait_time=int(os.environ['REPEAT_ON_ERROR_WAIT_TIME_SEC'])
+else:
+    # set default values
+    max_repeat_counter=0
+    repeat_wait_time=0
 
 
 CONFIG = get_monitoring_configuration(os.environ['MONITORING_CONFIGURATION_URL'])
@@ -166,7 +183,14 @@ if 'webpages' in CONFIG:
         else:
             return_code = 200
 
-        status, details = check_status(url=webpage['monitoring_url'], return_code=200, ok_string=response_ok_data, warn_string=response_warn_data)
+        repeat_counter=0
+        while max_repeat_counter >= repeat_counter:
+            repeat_counter+=1
+            status, details = check_status(url=webpage['monitoring_url'], return_code=200, ok_string=response_ok_data, warn_string=response_warn_data)
+            if status == 2 and repeat_on_error:
+                log.warning('WARNING ' + webpage['monitoring_url'] + ' (' + details + ') - repeat in ' + str(repeat_wait_time) + ' seconds.')
+                time.sleep(repeat_wait_time)
+
 
         if status == 2:
             log.info('OK ' + webpage['monitoring_url'])
