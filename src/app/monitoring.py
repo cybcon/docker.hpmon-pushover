@@ -34,7 +34,8 @@ def get_monitoring_configuration(path: str):
             log.error('File not found exception: {}'.format(filename))
             raise Exception('File not found exception: {}'.format(filename))
 
-        with open(filename, encoding='utf-8') as f: monitoring_configuration = json.load(f)
+        with open(filename, encoding='utf-8') as f:
+            monitoring_configuration = json.load(f)
     if path.strip().lower().startswith('http://') or path.strip().lower().startswith('https://'):
         log.debug("Load  configuration from url: {}".format(path))
         try:
