@@ -1,12 +1,10 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: fix-byte-order-marker
       - id: check-json
       - id: check-yaml
-        # args:
-        #   - "-c __GIT_WORKING_DIR__/.linter-config/.yamllint"
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
@@ -15,10 +13,15 @@ repos:
       - id: detect-aws-credentials
         args: ['--allow-missing-credentials']
       - id: detect-private-key
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.81.0
+  - repo: https://github.com/myint/autoflake
+    rev: v2.3.1
     hooks:
-      - id: terraform_checkov
-        exclude: "[examples|test]/.*$"
+      - id: autoflake
         args:
-          - "--args=--config-file __GIT_WORKING_DIR__/.linter-config/.checkov.yml"
+          - --in-place
+          - --remove-unused-variables
+          - --remove-all-unused-imports
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker

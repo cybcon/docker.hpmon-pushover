@@ -6,9 +6,26 @@ Source code: [GitHub](https://github.com/cybcon/docker.hpmon-pushover)
 
 Container image: [DockerHub](https://hub.docker.com/r/oitc/hpmon-pushover)
 
+<!-- SHIELD GROUP -->
+[![][github-action-test-shield]][github-action-test-link]
+[![][github-action-release-shield]][github-action-release-link]
+[![][github-release-shield]][github-release-link]
+[![][github-releasedate-shield]][github-releasedate-link]
+[![][github-stars-shield]][github-stars-link]
+[![][github-forks-shield]][github-forks-link]
+[![][github-issues-shield]][github-issues-link]
+[![][github-license-shield]][github-license-link]
+
+[![][docker-release-shield]][docker-release-link]
+[![][docker-pulls-shield]][docker-pulls-link]
+[![][docker-stars-shield]][docker-stars-link]
+[![][docker-size-shield]][docker-size-link]
+
+
 # Supported tags and respective `Dockerfile` links
 
-* [`latest`, `1.0.2`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
+* [`latest`, `1.1.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
+* [`1.0.2`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
 * [`1.0.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.1/Dockerfile)
 * [`1.0.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.0/Dockerfile)
 
@@ -31,9 +48,12 @@ The container grab the configuration via environment variables.
 | `MONITORING_CONFIGURATION_URL` | The URL (can also be a file://) to the configuration in JSON format. | **MANDATORY** | |
 | `PUSHOVER_USER_KEY` | The user key of your pushover account | **MANDATORY** | |
 | `PUSHOVER_API_KEY` | The application key of your pushover application | **MANDATORY** | |
+| `REPEAT_ON_ERROR`  | `Boolean` (`true` or `false`). If the monitor runs on an error. Repeat the call. | **OPTIONAL** | `false` |
+| `REPEAT_ON_ERROR_COUNTER` | `Integer` Repeat n times. | **OPTIONAL** | 1 |
+| `REPEAT_ON_ERROR_WAIT_TIME_SEC` | `Integer` Wait time in seconds between next try. | **OPTIONAL** | 2 |
 | `LOGLEVEL` | The loglevel of the application inside the container, can be one of: `debug`, `info`, `warning`, `error` | **OPTIONAL** | ` info` |
 
-## Monitoring Configurtion
+## Monitoring configuration
 
 The configuration file (referenced in environment variable `MONITORING_CONFIGURATION_URL`) is in json format. The inner main json frame is:
 
@@ -110,7 +130,7 @@ I would appreciate a small donation to support the further development of my ope
 
 # License
 
-Copyright (c) 2021-2023 Michael Oberdorf IT-Consulting
+Copyright (c) 2021-2024 Michael Oberdorf IT-Consulting
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -129,3 +149,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+<!-- LINK GROUP -->
+[docker-pulls-link]: https://hub.docker.com/r/oitc/hpmon-pushover
+[docker-pulls-shield]: https://img.shields.io/docker/pulls/oitc/hpmon-pushover?color=45cc11&labelColor=black&style=flat-square
+[docker-release-link]: https://hub.docker.com/r/oitc/hpmon-pushover
+[docker-release-shield]: https://img.shields.io/docker/v/oitc/hpmon-pushover?color=369eff&label=docker&labelColor=black&logo=docker&logoColor=white&style=flat-square
+[docker-size-link]: https://hub.docker.com/r/oitc/hpmon-pushover
+[docker-size-shield]: https://img.shields.io/docker/image-size/oitc/hpmon-pushover?color=369eff&labelColor=black&style=flat-square
+[docker-stars-link]: https://hub.docker.com/r/oitc/hpmon-pushover
+[docker-stars-shield]: https://img.shields.io/docker/stars/oitc/hpmon-pushover?color=45cc11&labelColor=black&style=flat-square
+[github-action-release-link]: https://github.com/cybcon/docker.hpmon-pushover/actions/workflows/release-from-label.yaml
+[github-action-release-shield]: https://img.shields.io/github/actions/workflow/status/cybcon/docker.hpmon-pushover/release-from-label.yaml?label=release&labelColor=black&logo=githubactions&logoColor=white&style=flat-square
+[github-action-test-link]: https://github.com/cybcon/docker.hpmon-pushover/actions/workflows/test.yaml
+[github-action-test-shield-original]: https://github.com/cybcon/docker.hpmon-pushover/actions/workflows/test.yaml/badge.svg
+[github-action-test-shield]: https://img.shields.io/github/actions/workflow/status/cybcon/docker.hpmon-pushover/test.yaml?label=tests&labelColor=black&logo=githubactions&logoColor=white&style=flat-square
+[github-forks-link]: https://github.com/cybcon/docker.hpmon-pushover/network/members
+[github-forks-shield]: https://img.shields.io/github/forks/cybcon/docker.hpmon-pushover?color=8ae8ff&labelColor=black&style=flat-square
+[github-issues-link]: https://github.com/cybcon/docker.hpmon-pushover/issues
+[github-issues-shield]: https://img.shields.io/github/issues/cybcon/docker.hpmon-pushover?color=ff80eb&labelColor=black&style=flat-square
+[github-license-link]: https://github.com/cybcon/docker.hpmon-pushover/blob/main/LICENSE
+[github-license-shield]: https://img.shields.io/badge/license-MIT-blue?labelColor=black&style=flat-square
+[github-release-link]: https://github.com/cybcon/docker.hpmon-pushover/releases
+[github-release-shield]: https://img.shields.io/github/v/release/cybcon/docker.hpmon-pushover?color=369eff&labelColor=black&logo=github&style=flat-square
+[github-releasedate-link]: https://github.com/cybcon/docker.hpmon-pushover/releases
+[github-releasedate-shield]: https://img.shields.io/github/release-date/cybcon/docker.hpmon-pushover?labelColor=black&style=flat-square
+[github-stars-link]: https://github.com/cybcon/docker.hpmon-pushover
+[github-stars-shield]: https://img.shields.io/github/stars/cybcon/docker.hpmon-pushover?color=ffcb47&labelColor=black&style=flat-square
