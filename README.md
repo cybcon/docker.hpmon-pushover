@@ -55,7 +55,7 @@ The container grab the configuration via environment variables.
 | `REPEAT_ON_ERROR_WAIT_TIME_SEC` | `Integer` Wait time in seconds between next try. | **OPTIONAL** | 2 |
 | `LOGLEVEL` | The loglevel of the application inside the container, can be one of: `debug`, `info`, `warning`, `error` | **OPTIONAL** | ` info` |
 
-## Monitoring Configurtion
+## Monitoring configuration
 
 The configuration file (referenced in environment variable `MONITORING_CONFIGURATION_URL`) is in json format. The inner main json frame is:
 
