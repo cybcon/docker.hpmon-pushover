@@ -7,7 +7,9 @@ Source code: [GitHub](https://github.com/cybcon/docker.hpmon-pushover)
 Container image: [DockerHub](https://hub.docker.com/r/oitc/hpmon-pushover)
 
 <!-- SHIELD GROUP -->
+<!--
 [![][github-action-test-shield]][github-action-test-link]
+-->
 [![][github-action-release-shield]][github-action-release-link]
 [![][github-release-shield]][github-release-link]
 [![][github-releasedate-shield]][github-releasedate-link]
