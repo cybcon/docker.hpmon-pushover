@@ -4,7 +4,7 @@ LABEL maintainer="Michael Oberdorf IT-Consulting <info@oberdorf-itc.de>"
 LABEL site.local.program.version="1.1.0"
 
 # LOGLEVEL can be one of debug, info, warning , error
-ENV LOGLEVEL info
+ENV LOGLEVEL=info
 
 COPY --chown=root:root /src /
 
