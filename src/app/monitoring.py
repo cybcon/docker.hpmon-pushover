@@ -40,8 +40,8 @@ def get_monitoring_configuration(path: str):
         log.debug("Load  configuration from url: {}".format(path))
         try:
             response = requests.get(path)
-        except:
-            log.error('Error while retrieving monitoring configuration from URL: {}. URL not reachable!'.format(filename))
+        except requests.exceptions.RequestException as e:
+            log.error('Error while retrieving monitoring configuration from URL: {}. URL not reachable ({})!'.format(filename, e))
         if response.status_code != 200:
             log.error('Error while retrieving monitoring configuration from URL: {}. Return code {}'.format(filename, response.status_code))
             raise Exception('Error while retrieving monitoring configuration from URL: {}. Return code {}'.format(filename, response.status_code))
@@ -63,16 +63,16 @@ def check_status(url: str, return_code: int = 200, ok_string: str = None, warn_s
     """
     try:
         response = requests.get(url)
-    except:
-        return(0, "URL not reachable")
+    except requests.exceptions.RequestException as e:
+        return(0, "URL not reachable ({})".format(e))
 
     if response.status_code != return_code:
         return(0, "URL reachable, but status code {} != {}".format(response.status_code, return_code))
 
-    if ok_string != None:
+    if ok_string:
         if ok_string in response.text:
             return(2, "OK")
-        elif warn_string != None and warn_string in response.text:
+        elif warn_string and warn_string in response.text:
             return(1, "String found for warning indication in response body: " + warn_string)
         else:
             return(0, "Validation pattern not found in response body")
@@ -90,7 +90,8 @@ def send_pushover_message(userkey: str, apikey: str, title: str, message: str, p
     @param message: string,
     @param priority: integer, the PushOver message priority (-2 to 2, default: 0)
     """
-    import http.client, urllib
+    import http.client
+    import urllib
     conn = http.client.HTTPSConnection("api.pushover.net:443")
     conn.request("POST", "/1/messages.json",
     urllib.parse.urlencode({
@@ -109,7 +110,7 @@ def send_pushover_message(userkey: str, apikey: str, title: str, message: str, p
 """
 log = logging.getLogger()
 log_handler = logging.StreamHandler(sys.stdout)
-if not 'LOGLEVEL' in os.environ:
+if 'LOGLEVEL' not in os.environ:
     log.setLevel(logging.INFO)
     log_handler.setLevel(logging.INFO)
 else:
@@ -136,13 +137,13 @@ log.info('OITC Webpage Monitoring System version ' + VERSION + ' started')
 
 # Read environment variables
 log.debug('Validate environment variables')
-if not 'PUSHOVER_USER_KEY' in os.environ:
+if 'PUSHOVER_USER_KEY' not in os.environ:
     log.error('Environment variable PUSHOVER_USER_KEY not defined')
     raise Exception('Environment variable PUSHOVER_USER_KEY not defined')
-if not 'PUSHOVER_API_KEY' in os.environ:
+if 'PUSHOVER_API_KEY' not in os.environ:
     log.error('Environment variable PUSHOVER_API_KEY not defined')
     raise Exception('Environment variable PUSHOVER_API_KEY not defined')
-if not 'MONITORING_CONFIGURATION_URL' in os.environ:
+if 'MONITORING_CONFIGURATION_URL' not in os.environ:
     log.error('Environment variable MONITORING_CONFIGURATION_URL not defined')
     raise Exception('Environment variable MONITORING_CONFIGURATION_URL not defined')
 repeat_on_error=False
@@ -169,15 +170,15 @@ CONFIG = get_monitoring_configuration(os.environ['MONITORING_CONFIGURATION_URL']
 if 'webpages' in CONFIG:
     for webpage in CONFIG['webpages']:
         log.debug('Process monitoring entry: ' + json.dumps(webpage))
-        if not 'monitoring_url' in webpage or len(webpage['monitoring_url']) < 7:
+        if 'monitoring_url' not in webpage or len(webpage['monitoring_url']) < 7:
             log.warning('Entry has no attribute "monitoring_url": ' + json.dumps(webpage))
             continue
 
         response_ok_data = None
-        if 'response_ok_data' in webpage and webpage['response_ok_data'] != None and len(webpage['response_ok_data']):
+        if 'response_ok_data' in webpage and webpage['response_ok_data'] and len(webpage['response_ok_data']):
             response_ok_data = webpage['response_ok_data']
         response_warn_data = None
-        if 'response_warn_data' in webpage and webpage['response_warn_data'] != None and len(webpage['response_warn_data']):
+        if 'response_warn_data' in webpage and webpage['response_warn_data'] and len(webpage['response_warn_data']):
             response_warn_data = webpage['response_warn_data']
 
         if 'return_code' in webpage and isinstance(webpage['return_code'], int):
@@ -186,12 +187,14 @@ if 'webpages' in CONFIG:
             return_code = 200
 
         repeat_counter=0
-        while max_repeat_counter <= repeat_counter:
+        while max_repeat_counter >= repeat_counter:
             repeat_counter+=1
             status, details = check_status(url=webpage['monitoring_url'], return_code=200, ok_string=response_ok_data, warn_string=response_warn_data)
-            if status == 2 and repeat_on_error:
+            if status == 0 and repeat_on_error:
                 log.warning('WARNING ' + webpage['monitoring_url'] + ' (' + details + ') - repeat in ' + str(repeat_wait_time) + ' seconds.')
                 time.sleep(repeat_wait_time)
+            else:
+                break
 
 
         if status == 2:
