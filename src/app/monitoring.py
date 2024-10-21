@@ -145,6 +145,7 @@ if not 'PUSHOVER_API_KEY' in os.environ:
 if not 'MONITORING_CONFIGURATION_URL' in os.environ:
     log.error('Environment variable MONITORING_CONFIGURATION_URL not defined')
     raise Exception('Environment variable MONITORING_CONFIGURATION_URL not defined')
+repeat_on_error=False
 if 'REPEAT_ON_ERROR' in os.environ:
     repeat_on_error=False
     if os.environ['REPEAT_ON_ERROR'].lower() == 'true' or os.environ['REPEAT_ON_ERROR'].lower() == 'yes':
