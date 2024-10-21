@@ -50,7 +50,7 @@ The container grab the configuration via environment variables.
 | `MONITORING_CONFIGURATION_URL` | The URL (can also be a file://) to the configuration in JSON format. | **MANDATORY** | |
 | `PUSHOVER_USER_KEY` | The user key of your pushover account | **MANDATORY** | |
 | `PUSHOVER_API_KEY` | The application key of your pushover application | **MANDATORY** | |
-| `REPEAT_ON_ERROR`  | `Boolean` (true | false). If the monitor runs on an error. Repeat the call. | **OPTIONAL** | `false` |
+| `REPEAT_ON_ERROR`  | `Boolean` (`true` or `false`). If the monitor runs on an error. Repeat the call. | **OPTIONAL** | `false` |
 | `REPEAT_ON_ERROR_COUNTER` | `Integer` Repeat n times. | **OPTIONAL** | 1 |
 | `REPEAT_ON_ERROR_WAIT_TIME_SEC` | `Integer` Wait time in seconds between next try. | **OPTIONAL** | 2 |
 | `LOGLEVEL` | The loglevel of the application inside the container, can be one of: `debug`, `info`, `warning`, `error` | **OPTIONAL** | ` info` |
