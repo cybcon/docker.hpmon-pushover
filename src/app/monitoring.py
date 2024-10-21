@@ -186,7 +186,7 @@ if 'webpages' in CONFIG:
             return_code = 200
 
         repeat_counter=0
-        while max_repeat_counter >= repeat_counter:
+        while max_repeat_counter <= repeat_counter:
             repeat_counter+=1
             status, details = check_status(url=webpage['monitoring_url'], return_code=200, ok_string=response_ok_data, warn_string=response_warn_data)
             if status == 2 and repeat_on_error:
