@@ -23,7 +23,7 @@ pool:
 
 
 variables:
-  appVersion: 1.0.2
+  appVersion: 1.1.1
   containerBuildPath: $(Build.Repository.Name)/resources
   REGISTRY_FQDN: croitccontainerregistryprod.azurecr.io
   REPOSITORY_NAME: homepage_monitoring
