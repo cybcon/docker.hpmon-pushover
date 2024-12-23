@@ -5,19 +5,21 @@ outages will be send as pushover messages
 Author: Michael Oberdorf
 Datum: 2021-11-30
 *************************************************************************** """
+import json
+import logging
 import os
 import sys
-import json
-import requests
-import logging
 import time
 
-VERSION = '1.1.0'
+import requests
+
+VERSION = "1.1.1"
 """
 ###############################################################################
 # F U N C T I O N S
 ###############################################################################
 """
+
 
 def get_monitoring_configuration(path: str):
     """
@@ -26,30 +28,43 @@ def get_monitoring_configuration(path: str):
     @param path: String, file (file://) or url (http(s)?://) to the monitoring configuration JSON file
     @return: dict(), the JSON from given path as parsed dict()
     """
-    monitoring_configuration=dict()
-    if path.strip().lower().startswith('file://'):
+    monitoring_configuration = dict()
+    if path.strip().lower().startswith("file://"):
         filename = path[7:]
         log.debug("Load local configuration file: {}".format(filename))
         if not os.path.isfile(filename):
-            log.error('File not found exception: {}'.format(filename))
-            raise Exception('File not found exception: {}'.format(filename))
+            log.error("File not found exception: {}".format(filename))
+            raise Exception("File not found exception: {}".format(filename))
 
-        with open(filename, encoding='utf-8') as f:
+        with open(filename, encoding="utf-8") as f:
             monitoring_configuration = json.load(f)
-    if path.strip().lower().startswith('http://') or path.strip().lower().startswith('https://'):
+    if path.strip().lower().startswith("http://") or path.strip().lower().startswith("https://"):
         log.debug("Load  configuration from url: {}".format(path))
         try:
             response = requests.get(path)
         except requests.exceptions.RequestException as e:
-            log.error('Error while retrieving monitoring configuration from URL: {}. URL not reachable ({})!'.format(filename, e))
+            log.error(
+                "Error while retrieving monitoring configuration from URL: {}. URL not reachable ({})!".format(
+                    filename, e
+                )
+            )
         if response.status_code != 200:
-            log.error('Error while retrieving monitoring configuration from URL: {}. Return code {}'.format(filename, response.status_code))
-            raise Exception('Error while retrieving monitoring configuration from URL: {}. Return code {}'.format(filename, response.status_code))
+            log.error(
+                "Error while retrieving monitoring configuration from URL: {}. Return code {}".format(
+                    filename, response.status_code
+                )
+            )
+            raise Exception(
+                "Error while retrieving monitoring configuration from URL: {}. Return code {}".format(
+                    filename, response.status_code
+                )
+            )
 
         monitoring_configuration = json.loads(response.text)
 
     log.debug("Monitoring configuration loaded:\n{}".format(json.dumps(monitoring_configuration, indent=4)))
-    return(monitoring_configuration)
+    return monitoring_configuration
+
 
 def check_status(url: str, return_code: int = 200, ok_string: str = None, warn_string: str = None):
     """
@@ -64,20 +79,20 @@ def check_status(url: str, return_code: int = 200, ok_string: str = None, warn_s
     try:
         response = requests.get(url)
     except requests.exceptions.RequestException as e:
-        return(0, "URL not reachable ({})".format(e))
+        return (0, "URL not reachable ({})".format(e))
 
     if response.status_code != return_code:
-        return(0, "URL reachable, but status code {} != {}".format(response.status_code, return_code))
+        return (0, "URL reachable, but status code {} != {}".format(response.status_code, return_code))
 
     if ok_string:
         if ok_string in response.text:
-            return(2, "OK")
+            return (2, "OK")
         elif warn_string and warn_string in response.text:
-            return(1, "String found for warning indication in response body: " + warn_string)
+            return (1, "String found for warning indication in response body: " + warn_string)
         else:
-            return(0, "Validation pattern not found in response body")
+            return (0, "Validation pattern not found in response body")
     else:
-        return(2, "OK")
+        return (2, "OK")
 
 
 def send_pushover_message(userkey: str, apikey: str, title: str, message: str, priority: int = 0):
@@ -92,16 +107,18 @@ def send_pushover_message(userkey: str, apikey: str, title: str, message: str, p
     """
     import http.client
     import urllib
+
     conn = http.client.HTTPSConnection("api.pushover.net:443")
-    conn.request("POST", "/1/messages.json",
-    urllib.parse.urlencode({
-      "token": apikey,
-      "user": userkey,
-      "title": title,
-      "message": message,
-      "priority": priority
-      }), { "Content-type": "application/x-www-form-urlencoded" })
+    conn.request(
+        "POST",
+        "/1/messages.json",
+        urllib.parse.urlencode(
+            {"token": apikey, "user": userkey, "title": title, "message": message, "priority": priority}
+        ),
+        {"Content-type": "application/x-www-form-urlencoded"},
+    )
     conn.getresponse()
+
 
 """
 ###############################################################################
@@ -110,112 +127,126 @@ def send_pushover_message(userkey: str, apikey: str, title: str, message: str, p
 """
 log = logging.getLogger()
 log_handler = logging.StreamHandler(sys.stdout)
-if 'LOGLEVEL' not in os.environ:
+if "LOGLEVEL" not in os.environ:
     log.setLevel(logging.INFO)
     log_handler.setLevel(logging.INFO)
 else:
-  if os.environ['LOGLEVEL'].lower() == 'debug':
-      log.setLevel(logging.DEBUG)
-      log_handler.setLevel(logging.DEBUG)
-  elif os.environ['LOGLEVEL'].lower() == 'info':
-      log.setLevel(logging.INFO)
-      log_handler.setLevel(logging.INFO)
-  elif os.environ['LOGLEVEL'].lower() == 'warning':
-      log.setLevel(logging.WARN)
-      log_handler.setLevel(logging.WARN)
-  elif os.environ['LOGLEVEL'].lower() == 'error':
-      log.setLevel(logging.ERROR)
-      log_handler.setLevel(logging.ERROR)
-  else:
-      log.setLevel(logging.INFO)
-      log_handler.setLevel(logging.INFO)
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    if os.environ["LOGLEVEL"].lower() == "debug":
+        log.setLevel(logging.DEBUG)
+        log_handler.setLevel(logging.DEBUG)
+    elif os.environ["LOGLEVEL"].lower() == "info":
+        log.setLevel(logging.INFO)
+        log_handler.setLevel(logging.INFO)
+    elif os.environ["LOGLEVEL"].lower() == "warning":
+        log.setLevel(logging.WARN)
+        log_handler.setLevel(logging.WARN)
+    elif os.environ["LOGLEVEL"].lower() == "error":
+        log.setLevel(logging.ERROR)
+        log_handler.setLevel(logging.ERROR)
+    else:
+        log.setLevel(logging.INFO)
+        log_handler.setLevel(logging.INFO)
+log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 log_handler.setFormatter(log_formatter)
 log.addHandler(log_handler)
 
-log.info('OITC Webpage Monitoring System version ' + VERSION + ' started')
+log.info("OITC Webpage Monitoring System version " + VERSION + " started")
 
 # Read environment variables
-log.debug('Validate environment variables')
-if 'PUSHOVER_USER_KEY' not in os.environ:
-    log.error('Environment variable PUSHOVER_USER_KEY not defined')
-    raise Exception('Environment variable PUSHOVER_USER_KEY not defined')
-if 'PUSHOVER_API_KEY' not in os.environ:
-    log.error('Environment variable PUSHOVER_API_KEY not defined')
-    raise Exception('Environment variable PUSHOVER_API_KEY not defined')
-if 'MONITORING_CONFIGURATION_URL' not in os.environ:
-    log.error('Environment variable MONITORING_CONFIGURATION_URL not defined')
-    raise Exception('Environment variable MONITORING_CONFIGURATION_URL not defined')
-repeat_on_error=False
-if 'REPEAT_ON_ERROR' in os.environ:
-    repeat_on_error=False
-    if os.environ['REPEAT_ON_ERROR'].lower() == 'true' or os.environ['REPEAT_ON_ERROR'].lower() == 'yes':
-        repeat_on_error=True
+log.debug("Validate environment variables")
+if "PUSHOVER_USER_KEY" not in os.environ:
+    log.error("Environment variable PUSHOVER_USER_KEY not defined")
+    raise Exception("Environment variable PUSHOVER_USER_KEY not defined")
+if "PUSHOVER_API_KEY" not in os.environ:
+    log.error("Environment variable PUSHOVER_API_KEY not defined")
+    raise Exception("Environment variable PUSHOVER_API_KEY not defined")
+if "MONITORING_CONFIGURATION_URL" not in os.environ:
+    log.error("Environment variable MONITORING_CONFIGURATION_URL not defined")
+    raise Exception("Environment variable MONITORING_CONFIGURATION_URL not defined")
+repeat_on_error = False
+if "REPEAT_ON_ERROR" in os.environ:
+    repeat_on_error = False
+    if os.environ["REPEAT_ON_ERROR"].lower() == "true" or os.environ["REPEAT_ON_ERROR"].lower() == "yes":
+        repeat_on_error = True
 if repeat_on_error:
     # set default values
-    max_repeat_counter=1
-    repeat_wait_time=2
-    if 'REPEAT_ON_ERROR_COUNTER' in os.environ:
-        max_repeat_counter=int(os.environ['REPEAT_ON_ERROR_COUNTER'])
-    if 'REPEAT_ON_ERROR_WAIT_TIME_SEC' in os.environ:
-        repeat_wait_time=int(os.environ['REPEAT_ON_ERROR_WAIT_TIME_SEC'])
+    max_repeat_counter = 1
+    repeat_wait_time = 2
+    if "REPEAT_ON_ERROR_COUNTER" in os.environ:
+        max_repeat_counter = int(os.environ["REPEAT_ON_ERROR_COUNTER"])
+    if "REPEAT_ON_ERROR_WAIT_TIME_SEC" in os.environ:
+        repeat_wait_time = int(os.environ["REPEAT_ON_ERROR_WAIT_TIME_SEC"])
 else:
     # set default values
-    max_repeat_counter=0
-    repeat_wait_time=0
+    max_repeat_counter = 0
+    repeat_wait_time = 0
 
 
-CONFIG = get_monitoring_configuration(os.environ['MONITORING_CONFIGURATION_URL'])
+CONFIG = get_monitoring_configuration(os.environ["MONITORING_CONFIGURATION_URL"])
 
-if 'webpages' in CONFIG:
-    for webpage in CONFIG['webpages']:
-        log.debug('Process monitoring entry: ' + json.dumps(webpage))
-        if 'monitoring_url' not in webpage or len(webpage['monitoring_url']) < 7:
+if "webpages" in CONFIG:
+    for webpage in CONFIG["webpages"]:
+        log.debug("Process monitoring entry: " + json.dumps(webpage))
+        if "monitoring_url" not in webpage or len(webpage["monitoring_url"]) < 7:
             log.warning('Entry has no attribute "monitoring_url": ' + json.dumps(webpage))
             continue
 
         response_ok_data = None
-        if 'response_ok_data' in webpage and webpage['response_ok_data'] and len(webpage['response_ok_data']):
-            response_ok_data = webpage['response_ok_data']
+        if "response_ok_data" in webpage and webpage["response_ok_data"] and len(webpage["response_ok_data"]):
+            response_ok_data = webpage["response_ok_data"]
         response_warn_data = None
-        if 'response_warn_data' in webpage and webpage['response_warn_data'] and len(webpage['response_warn_data']):
-            response_warn_data = webpage['response_warn_data']
+        if "response_warn_data" in webpage and webpage["response_warn_data"] and len(webpage["response_warn_data"]):
+            response_warn_data = webpage["response_warn_data"]
 
-        if 'return_code' in webpage and isinstance(webpage['return_code'], int):
-            return_code = int(webpage['return_code'])
+        if "return_code" in webpage and isinstance(webpage["return_code"], int):
+            return_code = int(webpage["return_code"])
         else:
             return_code = 200
 
-        repeat_counter=0
+        repeat_counter = 0
         while max_repeat_counter >= repeat_counter:
-            repeat_counter+=1
-            status, details = check_status(url=webpage['monitoring_url'], return_code=200, ok_string=response_ok_data, warn_string=response_warn_data)
+            repeat_counter += 1
+            status, details = check_status(
+                url=webpage["monitoring_url"],
+                return_code=200,
+                ok_string=response_ok_data,
+                warn_string=response_warn_data,
+            )
             if status == 0 and repeat_on_error:
-                log.warning('WARNING ' + webpage['monitoring_url'] + ' (' + details + ') - repeat in ' + str(repeat_wait_time) + ' seconds.')
+                log.warning(
+                    "WARNING "
+                    + webpage["monitoring_url"]
+                    + " ("
+                    + details
+                    + ") - repeat in "
+                    + str(repeat_wait_time)
+                    + " seconds."
+                )
                 time.sleep(repeat_wait_time)
             else:
                 break
 
-
         if status == 2:
-            log.info('OK ' + webpage['monitoring_url'])
+            log.info("OK " + webpage["monitoring_url"])
         elif status == 1:
-            log.warning('WARNING ' + webpage['monitoring_url'] + ' (' + details + ')')
-            send_pushover_message(userkey=os.environ['PUSHOVER_USER_KEY'],
-                                  apikey=os.environ['PUSHOVER_API_KEY'],
-                                  title='Website warning',
-                                  message="Website monitoring warning for ({})\nDetails: {}".format(webpage['monitoring_url'], details),
-                                  priority=0
-                                  )
+            log.warning("WARNING " + webpage["monitoring_url"] + " (" + details + ")")
+            send_pushover_message(
+                userkey=os.environ["PUSHOVER_USER_KEY"],
+                apikey=os.environ["PUSHOVER_API_KEY"],
+                title="Website warning",
+                message="Website monitoring warning for ({})\nDetails: {}".format(webpage["monitoring_url"], details),
+                priority=0,
+            )
         else:
-            log.error('ERROR ' + webpage['monitoring_url'] + ' (' + details + ')')
-            send_pushover_message(userkey=os.environ['PUSHOVER_USER_KEY'],
-                                  apikey=os.environ['PUSHOVER_API_KEY'],
-                                  title='Website down',
-                                  message="Website monitoring error for ({})\nDetails: {}".format(webpage['monitoring_url'], details),
-                                  priority=1
-                                  )
+            log.error("ERROR " + webpage["monitoring_url"] + " (" + details + ")")
+            send_pushover_message(
+                userkey=os.environ["PUSHOVER_USER_KEY"],
+                apikey=os.environ["PUSHOVER_API_KEY"],
+                title="Website down",
+                message="Website monitoring error for ({})\nDetails: {}".format(webpage["monitoring_url"], details),
+                priority=1,
+            )
 
 
-log.info('OITC Webpage Monitoring System version ' + VERSION + ' ended')
+log.info("OITC Webpage Monitoring System version " + VERSION + " ended")
 sys.exit()

@@ -24,7 +24,8 @@ Container image: [DockerHub](https://hub.docker.com/r/oitc/hpmon-pushover)
 
 # Supported tags and respective `Dockerfile` links
 
-* [`latest`, `1.1.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
+* [`latest`, `1.1.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.1/Dockerfile)
+* [`1.1.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.0/Dockerfile)
 * [`1.0.2`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
 * [`1.0.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.1/Dockerfile)
 * [`1.0.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.0/Dockerfile)
