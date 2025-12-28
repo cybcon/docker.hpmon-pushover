@@ -24,7 +24,8 @@ Container image: [DockerHub](https://hub.docker.com/r/oitc/hpmon-pushover)
 
 # Supported tags and respective `Dockerfile` links
 
-* [`latest`, `1.1.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.1/Dockerfile)
+* [`latest`, `1.1.2`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.2/Dockerfile)
+* [`1.1.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.1/Dockerfile)
 * [`1.1.0`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.1.0/Dockerfile)
 * [`1.0.2`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.2/Dockerfile)
 * [`1.0.1`](https://github.com/cybcon/docker.hpmon-pushover/blob/v1.0.1/Dockerfile)
@@ -131,7 +132,7 @@ I would appreciate a small donation to support the further development of my ope
 
 # License
 
-Copyright (c) 2021-2024 Michael Oberdorf IT-Consulting
+Copyright (c) 2021-2025 Michael Oberdorf IT-Consulting
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
