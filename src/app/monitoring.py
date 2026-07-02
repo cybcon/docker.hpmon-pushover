@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
-""" ***************************************************************************
-monitoring.py - is a tool to monitor if a webpage is up and running
-outages will be send as pushover messages
+"""
+monitoring.py - is a tool to monitor if a webpage is up and running outages will be send as pushover messages
 Author: Michael Oberdorf
-Datum: 2021-11-30
-*************************************************************************** """
+Date: 2021-11-30
+Last modified by: Michael Oberdorf
+Last modified at: 2026-07-02
+"""
+
 import json
 import logging
 import os
@@ -13,12 +14,43 @@ import time
 
 import requests
 
-VERSION = "1.1.2"
+__author__ = "Michael Oberdorf <info@oberdorf-itc.de>"
+__status__ = "production"
+__date__ = "2026-07-02"
+__version_info__ = ("1", "2", "0")
+__version__ = ".".join(__version_info__)
+
 """
 ###############################################################################
 # F U N C T I O N S
 ###############################################################################
 """
+
+
+def __initialize_logger(severity: int = logging.INFO) -> logging.Logger:
+    """
+    Initialize the logger with the given severity level.
+
+    :param severity int: The optional severity level for the logger. (default: 20 (INFO))
+    :return logging.RootLogger: The initialized logger.
+    :raise ValueError: If the severity level is not valid.
+    :raise TypeError: If the severity level is not an integer.
+    :raise Exception: If the logger cannot be initialized.
+    """
+    valid_severity = [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL]
+    if severity not in valid_severity:
+        raise ValueError(f"Invalid severity level: {severity}. Must be one of {valid_severity}.")
+
+    log = logging.getLogger()
+    log_handler = logging.StreamHandler(sys.stdout)
+
+    log.setLevel(severity)
+    log_handler.setLevel(severity)
+    log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    log_handler.setFormatter(log_formatter)
+    log.addHandler(log_handler)
+
+    return log
 
 
 def get_monitoring_configuration(path: str):
@@ -125,32 +157,19 @@ def send_pushover_message(userkey: str, apikey: str, title: str, message: str, p
 # M A I N
 ###############################################################################
 """
-log = logging.getLogger()
-log_handler = logging.StreamHandler(sys.stdout)
 if "LOGLEVEL" not in os.environ:
-    log.setLevel(logging.INFO)
-    log_handler.setLevel(logging.INFO)
+    log = __initialize_logger(severity=logging.INFO)
 else:
     if os.environ["LOGLEVEL"].lower() == "debug":
-        log.setLevel(logging.DEBUG)
-        log_handler.setLevel(logging.DEBUG)
-    elif os.environ["LOGLEVEL"].lower() == "info":
-        log.setLevel(logging.INFO)
-        log_handler.setLevel(logging.INFO)
+        log = __initialize_logger(severity=logging.DEBUG)
     elif os.environ["LOGLEVEL"].lower() == "warning":
-        log.setLevel(logging.WARN)
-        log_handler.setLevel(logging.WARN)
+        log = __initialize_logger(severity=logging.WARN)
     elif os.environ["LOGLEVEL"].lower() == "error":
-        log.setLevel(logging.ERROR)
-        log_handler.setLevel(logging.ERROR)
+        log = __initialize_logger(severity=logging.ERROR)
     else:
-        log.setLevel(logging.INFO)
-        log_handler.setLevel(logging.INFO)
-log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-log_handler.setFormatter(log_formatter)
-log.addHandler(log_handler)
+        log = __initialize_logger(severity=logging.INFO)
 
-log.info("OITC Webpage Monitoring System version " + VERSION + " started")
+log.info(f"OITC Webpage Monitoring System version {__version__} started")
 
 # Read environment variables
 log.debug("Validate environment variables")
@@ -248,5 +267,5 @@ if "webpages" in CONFIG:
             )
 
 
-log.info("OITC Webpage Monitoring System version " + VERSION + " ended")
+log.info(f"OITC Webpage Monitoring System version {__version__} ended")
 sys.exit()
